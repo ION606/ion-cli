@@ -5,6 +5,7 @@ import { getAndParse } from './startup/getAndParseArgs.js';
 import animeMain from './anime/getAndSave.js';
 import help from './help.js'
 
+
 function executeCommand(command, content = null) {
     return new Promise((resolve) => {
         switch(command) {
@@ -21,8 +22,14 @@ function executeCommand(command, content = null) {
     });
 }
 
+
 async function main() {
     const args = await getAndParse();
+
+    if (JSON.stringify(args) == "{}") {
+        return await executeCommand('error');
+    }
+
     for (const i in args) {
         // console.log(chalk.blue(i) + ": " + args[i])
         const worked = await executeCommand(i, args[i]);

@@ -7,6 +7,7 @@ import path from 'path';
 import generateQuery from './userQuery.js';
 import { getJSON, setJSON } from '../utils/JSON.js';
 import https from 'https';
+import downloadStream from './downloadVideo.js';
 
 
 /**
@@ -75,27 +76,16 @@ async function getAnime9(id, episode = null) {
         
         const vidPath = await getJSON("apath");
 
-        const newpath = path.resolve(vidPath, data.title + ' - ' + episodeData.title + '.mp4');
+        const newpath = path.resolve(vidPath, data.title + ' - ' + episodeData.title + '.m3u8');
         
         console.log(chalk.green('done!'));
         console.log(chalk.green('writing to local file...'));
 
-        const file = fs.createWriteStream(newpath);
-        https.get(epSource.url, function(response) {
-            response.pipe(file);
+        console.log(epSource);
 
-            // after download completed close filestream
-            file.on("finish", () => {
-                file.close();
-                console.log(chalk.green(`done!\nFile located at ${newpath}`));
-            });
-        });
+        //Download the file
+        downloadStream(epSource.url, newpath);
 
-
-
-        // if (epSource.isM3U8) {
-        //     m3u8stream(epSource.url).pipe(fs.createWriteStream(newpath));
-        // }
 
         console.log(chalk.green('done!'));
     } catch (err) {
@@ -124,9 +114,16 @@ async function getSearchTerm(name, episode = null) {
         url = `https://api.consumet.org/anime/9anime/${name}`;
         try {
             const { data } = await axios.get(url);
+            
+            if (data.results.length == 0) {
+                // console.log(data);
+                return console.log(chalk.red("No results found (is the API down?)"));
+            }
+            
             getAnime9(data.results[0].id, episode);
             // return resolve(data);
         } catch (err) {
+            console.error(err);
             console.log(chalk.red(`ERROR: ${err.message}\n\nTask aborted`));
         }
     });
@@ -153,6 +150,8 @@ async function getUrl(name, episode = null) {
 
 
 async function getAnime(name, subcommand, episode = null) {
+    return downloadStream("https://xege.vizcloud.club/simple/EqPFIf4QWADtjDlGha7rC8Iu+lwW5ry2Fxh7rqk+wYMnU94US2El_Po4w12g/br/list.m3u8");
+
     switch (subcommand) {
         default: getUrl(name, episode);
     }
@@ -166,7 +165,7 @@ async function getAnime(name, subcommand, episode = null) {
 export default async function animeMain(command) {
     const apath = getJSON("apath");
     if (!apath) {
-        const apath = await askUserQuery("Please specify a path to save to\n");
+        const apath = await askUserQuery("Please specify a path to save to:\n");
         if (!apath || (apath === path.basename(apath))) {
             return console.log(chalk.red('Incorrect path!'));
         }
@@ -174,6 +173,15 @@ export default async function animeMain(command) {
         setJSON("apath", apath);
     }
 
+    const vpath = getJSON("vpath");
+    if (!vpath) {
+        const vpath = await askUserQuery("Please specify a path to your vlc.exe:\n");
+        if (!vpath || (vpath === path.basename(vpath))) {
+            return console.log(chalk.red('Incorrect path!'));
+        }
+
+        setJSON("vpath", vpath);
+    }
 
     const nameOpt = command.find((o) => (o.indexOf('name=') != -1));
     const subCommandOpt = command.find((o) => (o.indexOf('option=') != -1));

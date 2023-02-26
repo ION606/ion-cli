@@ -1,6 +1,6 @@
 
 /**
- * @returns { Promise<Array<String>>}
+ * @returns { Promise<JSON>>}
  */
 export function getAndParse() {
     return new Promise((resolve) => {
