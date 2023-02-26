@@ -1,0 +1,14 @@
+{
+  currentPage: 1,
+  hasNextPage: false,
+  results: [
+    {
+      id: 'plunderer.55jj',
+      title: 'Plunderer',
+      url: 'https://9anime.pl/watch/plunderer.55jj',
+      image: 'https://static.bunnycdn.ru/i/cache/images/2020/01/3a6cacd4ec426119692ab40d1ca3998a.jpg',
+      subOrSub: 'both',
+      type: 'TV'
+    }
+  ]
+}
