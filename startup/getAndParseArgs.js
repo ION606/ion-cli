@@ -6,12 +6,6 @@ export function getAndParse() {
     return new Promise((resolve) => {
         const argsRaw = [...process.argv].slice(2);
         const args = {};
-        // const keys = {};
-        // for (const i of argsRaw) {
-        //     if (i.indexOf('--') !== -1) {
-        //         keys[i.split('--')[1]] = argsRaw.indexOf(i)
-        //     }
-        // }
         const keys = argsRaw.join(" ").split("--");
         for (const i of keys) {
             if (i.length == 0) continue;

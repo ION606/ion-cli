@@ -150,7 +150,6 @@ async function getUrl(name, episode = null) {
 
 
 async function getAnime(name, subcommand, episode = null) {
-    return downloadStream("https://xege.vizcloud.club/simple/EqPFIf4QWADtjDlGha7rC8Iu+lwW5ry2Fxh7rqk+wYMnU94US2El_Po4w12g/br/list.m3u8");
 
     switch (subcommand) {
         default: getUrl(name, episode);
