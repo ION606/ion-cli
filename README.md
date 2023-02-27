@@ -1,8 +1,9 @@
 # ion-cli
 
 ## Installation Instructions
-1. clone this repo
-2. run `npm install -g`
+1. clone this repo via `git clone https://github.com/ION606/ion-cli.git`
+2. run `cd ion-cli`
+3. run `npm install -g`
 
 ## Running Instructions
 run using `ion --instruction`
