@@ -71,7 +71,6 @@ async function getAnime9(id, episode = null) {
         console.log(chalk.green('Fetching video sources...'));
         url = `https://api.consumet.org/anime/9anime/watch/${episodeData.id}`; //?server={serverName}`
         const epResp = await axios.get(url);
-        console.log(epResp.data)
         const epSource = epResp.data.sources[0];
         
         const vidPath = await getJSON("apath");
@@ -79,15 +78,10 @@ async function getAnime9(id, episode = null) {
         const newpath = path.resolve(vidPath, data.title + ' - ' + episodeData.title + '.m3u8');
         
         console.log(chalk.green('done!'));
-        console.log(chalk.green('writing to local file...'));
-
-        console.log(epSource);
+        console.log(chalk.green(`Now playing ${chalk.bold(`${data.title} episode ${epNumber} - ${episodeData.title}`)}`));
 
         //Download the file
         downloadStream(epSource.url, newpath);
-
-
-        console.log(chalk.green('done!'));
     } catch (err) {
         console.error(err);
         return console.log(chalk.red(`ERROR: ${err.message}\n\nTask aborted`));
@@ -114,7 +108,6 @@ async function getSearchTerm(name, episode = null) {
         url = `https://api.consumet.org/anime/9anime/${name}`;
         try {
             const { data } = await axios.get(url);
-            
             if (data.results.length == 0) {
                 // console.log(data);
                 return console.log(chalk.red("No results found (is the API down?)"));
@@ -131,22 +124,8 @@ async function getSearchTerm(name, episode = null) {
 
 
 async function getUrl(name, episode = null) {
-    const animeTerm = await getSearchTerm(name, episode);
-    return console.log(animeTerm);
-    const animeEpisode = animeTerm.episodesList.find((a) => (a.episodeNum == episode));
-
-    console.log(animeEpisode);
-
-    fetch(`https://api.consumet.stream/vidcdn/watch/${animeEpisode.episodeId}`)
-    .then((response) => response.json())
-    .then((animelist) => console.log(animelist));
+    getSearchTerm(name, episode);
 }
-
-
-// fetch(`https://gogoanime.consumet.stream/search?keyw=${"jojo"}`)
-// .then((response) => response.json())
-// .then((animelist) => console.log(animelist));
-
 
 
 async function getAnime(name, subcommand, episode = null) {
@@ -187,17 +166,12 @@ export default async function animeMain(command) {
     const episodeOpt = command.find((o) => (o.indexOf('episode=') != -1));
 
     if (command.length == 0 || nameOpt.length == 0) {
-        console.log(chalk.red("Please specify an anime title!"));
+        console.log(chalk.red("Please specify an anime title like so: " + chalk.bold("--anime name=name_here")));
         return false;
     }
-
-    console.log(episodeOpt);
 
     const name = nameOpt.split('=')[1];
     const subCommand = (subCommandOpt && subCommandOpt.length != 0) ? subCommandOpt.split('=')[1] : null;
     const episode = (episodeOpt && episodeOpt.length != 0) ? Number(episodeOpt.split('=')[1]) : null;
     getAnime(name, subCommand, episode);
-    return true;
-    // m3u8stream('http://somesite.com/link/to/the/playlist.m3u8')
-    // .pipe(fs.createWriteStream('videofile.mp4'));
 }

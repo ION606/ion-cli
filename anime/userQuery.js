@@ -10,7 +10,7 @@ export default function generateQuery(context) {
         query += chalk.yellow("episodes-all");
         query += ", therwise, enter the " + chalk.yellow("episode number\n");
         query += chalk.italic("Note: to compile with an episode number use");
-        query += chalk.blueBright(" --anime name=\"name\" episode=#\n");
+        query += chalk.blueBright(" --anime name=name episode=#\n");
     }
 
     return query;
