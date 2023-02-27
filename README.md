@@ -9,6 +9,7 @@ run using `ion --instruction`
 
 ## Notes
 * If you have trouble with windows running the script, try using `Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser`
+* To use **--anime** you ***MUST*** have [VLC](https://www.videolan.org/vlc/) installed
 
 # Specific Commands
 ## Anime
