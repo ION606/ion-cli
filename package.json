@@ -4,12 +4,13 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./anime/fromCLI.js"
   },
   "author": "ION606",
   "license": "ISC",
   "bin": {
-    "ion": "./main.js"
+    "ion": "./main.js",
+    "anime": "./anime_fromCLI.js"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
