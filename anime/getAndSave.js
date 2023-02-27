@@ -73,15 +73,14 @@ async function getAnime9(id, episode = null) {
         const epResp = await axios.get(url);
         const epSource = epResp.data.sources[0];
         
-        const vidPath = await getJSON("apath");
-
-        const newpath = path.resolve(vidPath, data.title + ' - ' + episodeData.title + '.m3u8');
+        // const vidPath = await getJSON("apath");
+        // const newpath = path.resolve(vidPath, data.title + ' - ' + episodeData.title + '.m3u8');
         
         console.log(chalk.green('done!'));
         console.log(chalk.green(`Now playing ${chalk.bold(`${data.title} episode ${epNumber} - ${episodeData.title}`)}`));
 
         //Download the file
-        downloadStream(epSource.url, newpath);
+        downloadStream(epSource.url);
     } catch (err) {
         console.error(err);
         return console.log(chalk.red(`ERROR: ${err.message}\n\nTask aborted`));
@@ -141,16 +140,6 @@ async function getAnime(name, subcommand, episode = null) {
  * @returns 
  */
 export default async function animeMain(command) {
-    const apath = getJSON("apath");
-    if (!apath) {
-        const apath = await askUserQuery("Please specify a path to save to:\n");
-        if (!apath || (apath === path.basename(apath))) {
-            return console.log(chalk.red('Incorrect path!'));
-        }
-
-        setJSON("apath", apath);
-    }
-
     const vpath = getJSON("vpath");
     if (!vpath) {
         const vpath = await askUserQuery("Please specify a path to your vlc.exe:\n");

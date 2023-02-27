@@ -8,7 +8,7 @@ const __dirname = dirname(__filename);
 
 
 export function getJSON(key) {
-    const p = path.resolve(__dirname, "../config.json");
+    const p = path.resolve(__dirname, "../ionconfig.json");
     if (fs.existsSync(p)) {
         const data = fs.readFileSync(p, 'utf8');
     
@@ -23,7 +23,7 @@ export function getJSON(key) {
 
 export function setJSON(key, val) {
     return new Promise((resolve, reject) => {
-        const p = path.resolve(__dirname, "../config.json");
+        const p = path.resolve(__dirname, "../ionconfig.json");
         const data = fs.readFileSync(p, 'utf8');
 
         var obj = JSON.parse(data); //now it an object

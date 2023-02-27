@@ -2,7 +2,7 @@ import { execFileSync } from 'child_process';
 import { getJSON } from '../utils/JSON.js';
 import chalk from 'chalk';
 
-export default async function donwloadFromStream(url, newpath) {
+export default async function donwloadFromStream(url) {
     try {
         const vpath = await getJSON("vpath");
         // start "C:\Program Files\VideoLAN\VLC\vlc.exe" url
