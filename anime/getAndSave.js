@@ -154,7 +154,7 @@ export default async function animeMain(command) {
     const subCommandOpt = command.find((o) => (o.indexOf('option=') != -1));
     const episodeOpt = command.find((o) => (o.indexOf('episode=') != -1));
 
-    if (command.length == 0 || nameOpt.length == 0) {
+    if (command.length == 0 || !nameOpt || nameOpt.length == 0) {
         console.log(chalk.red("Please specify an anime title like so: " + chalk.bold("--anime name=name_here")));
         return false;
     }
