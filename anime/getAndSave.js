@@ -4,6 +4,7 @@ import path from 'path';
 import { getJSON, setJSON } from '../utils/JSON.js';
 import getAnime9 from './9anime.js';
 import getGogo from './gogoAnime.js';
+import { askUserQuery } from './userQuery.js';
 
 
 
@@ -79,7 +80,7 @@ export default async function animeMain(command) {
     const episodeOpt = command.find((o) => (o.indexOf('episode=') != -1));
 
     if (command.length == 0 || !nameOpt || nameOpt.length == 0) {
-        console.log(chalk.red("Please specify an anime title like so: " + chalk.bold("--anime name=name_here")));
+        console.log(chalk.red("Please specify an anime title like so: " + chalk.bold("--anime name=\"name_here\"")));
         return false;
     }
 
