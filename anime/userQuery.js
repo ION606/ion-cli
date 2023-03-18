@@ -1,6 +1,7 @@
 import chalk from "chalk";
+import readline from 'readline'
 
-export default function generateQuery(context) {
+export function generateQuery(context) {
     var query;
     if (context == "animeep") {
         query = "To dump all data enter ";
@@ -14,4 +15,23 @@ export default function generateQuery(context) {
     }
 
     return query;
+}
+
+
+
+/**
+ * @param {String} query 
+ * @returns {Promise<String>}
+ */
+export function askUserQuery(query) {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
+
+    return new Promise(resolve => rl.question(query, ans => {
+        rl.close();
+        resolve(ans);
+    }))
+
 }

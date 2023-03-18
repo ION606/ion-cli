@@ -1,91 +1,9 @@
-import fs from 'fs'
-import m3u8stream from 'm3u8stream';
 import chalk from 'chalk';
 import axios from "axios";
-import readline from 'readline'
 import path from 'path';
-import generateQuery from './userQuery.js';
 import { getJSON, setJSON } from '../utils/JSON.js';
-import https from 'https';
-import downloadStream from './downloadVideo.js';
-
-
-/**
- * @param {String} query 
- * @returns {Promise<String>}
- */
-function askUserQuery(query) {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
-
-    return new Promise(resolve => rl.question(query, ans => {
-        rl.close();
-        resolve(ans);
-    }))
-
-}
-
-
-async function getAnime9(id, episode = null) {
-    var url = `https://api.consumet.org/anime/9anime/info/${id}`;
-    try {
-        const response = await axios.get(url, {params: {id: id}});
-        const { data } = response;
-        console.log(chalk.green('done!'));
-
-        var epNumber;
-
-        if (!episode) {
-            var query = generateQuery("animeep");
-            const userResp = (await askUserQuery(query)).toLowerCase();
-
-            if (userResp == "dumpdata") {
-                return console.log(data);
-            }
-            else if (userResp == "desc") {
-                return console.log(data.description)
-            }
-            else if (userResp == "episodes-all") {
-                return console.log(data.episodes);
-            }
-            else {
-                if (Number.isNaN(Number(userResp))) {
-                    return console.log(chalk.red(`${userResp} is not an integer (1, 2, 3, 4, etc)`));
-                }
-
-                epNumber = Number(userResp);
-            }
-        } else {
-            epNumber = episode;
-        }
-
-        const episodeData = data.episodes.find((e) => e.number == epNumber);
-        if (!episodeData) {
-            return console.log(chalk.red(`ERROR: No data found for ` + chalk.bold(`${data.title} (episode ${epNumber})`)));
-        }
-
-        
-        //get the urls
-        console.log(chalk.green('Fetching video sources...'));
-        url = `https://api.consumet.org/anime/9anime/watch/${episodeData.id}`; //?server={serverName}`
-        const epResp = await axios.get(url);
-        const epSource = epResp.data.sources[0];
-        
-        // const vidPath = await getJSON("apath");
-        // const newpath = path.resolve(vidPath, data.title + ' - ' + episodeData.title + '.m3u8');
-        
-        console.log(chalk.green('done!'));
-        console.log(chalk.green(`Now playing ${chalk.bold(`${data.title} episode ${epNumber} - ${episodeData.title}`)}`));
-
-        //Download the file
-        downloadStream(epSource.url);
-    } catch (err) {
-        console.error(err);
-        return console.log(chalk.red(`ERROR: ${err.message}\n\nTask aborted`));
-    }
-}
+import getAnime9 from './9anime.js';
+import getGogo from './gogoAnime.js';
 
 
 
@@ -93,14 +11,20 @@ async function getSearchTerm(name, episode = null) {
     return new Promise(async (resolve) => {
         console.log(chalk.green('Fetching data'));
 
-        var url = `https://api.consumet.org/anime/crunchyroll/${name}`;
-        // try {
-        //     const response = await axios.get(url);
-        //     const { data } = response;
-        //     return resolve(data);
-        // } catch (err) {
-        //     console.log(chalk.red(`ERROR: ${err.message}\n\nTrying backup method...`));
-        // }
+        // Using the example query "demon", and looking at the 2nd page of results.
+        var url = `https://api.consumet.org/anime/gogoanime/${name}`;
+
+        try {
+            const { data } = await axios.get(url);
+            if (data.results.length == 0) {
+                // console.log(data);
+                return console.log(chalk.red("No results found (is the API down?)"));
+            }
+
+            return getGogo(data.results[0].id, episode);
+        } catch (err) {
+            console.log(chalk.red(`ERROR: ${err.message}\n\nTrying backup method...`));
+        }
 
 
         //Backup section
@@ -130,7 +54,7 @@ async function getUrl(name, episode = null) {
 async function getAnime(name, subcommand, episode = null) {
 
     switch (subcommand) {
-        default: getUrl(name, episode);
+        default: getUrl(name.replaceAll(" ", '-'), episode);
     }
 }
 

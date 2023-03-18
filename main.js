@@ -24,6 +24,10 @@ function executeCommand(command, content = null) {
 
 
 async function main() {
+
+    //REMOVE THIS
+    return import('./anime_fromCLI.js');
+
     const args = await getAndParse();
 
     if (JSON.stringify(args) == "{}") {
